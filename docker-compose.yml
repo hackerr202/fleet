@@ -1,0 +1,49 @@
+services:
+  postgres:
+    image: postgres:15
+    restart: always
+    environment:
+      POSTGRES_USER: fleetadmin
+      POSTGRES_PASSWORD: fleetpass
+      POSTGRES_DB: fleetdb
+    ports:
+      - '5432:5432'
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  hasura:
+    image: hasura/graphql-engine:v2.36.1
+    restart: always
+    ports:
+      - '8080:8080'
+    environment:
+      HASURA_GRAPHQL_DATABASE_URL: postgres://fleetadmin:fleetpass@postgres:5432/fleetdb
+      HASURA_GRAPHQL_ENABLE_CONSOLE: 'true'
+      HASURA_GRAPHQL_ADMIN_SECRET: myhasurasecret
+    depends_on:
+      - postgres
+
+  backend:
+    build: ./backend
+    restart: always
+    ports:
+      - '4000:4000'
+    environment:
+      DATABASE_URL: postgres://fleetadmin:fleetpass@postgres:5432/fleetdb
+      HASURA_GRAPHQL_ENDPOINT: http://hasura:8080/v1/graphql
+    depends_on:
+      - postgres
+      - hasura
+
+  frontend:
+    build: ./frontend
+    restart: always
+    ports:
+      - '5173:5173'
+    environment:
+      VITE_GRAPHQL_ENDPOINT: http://localhost:8080/v1/graphql
+    depends_on:
+      - hasura
+
+volumes:
+  postgres_data: 
