@@ -27,7 +27,6 @@ services:
     name: hasura
     env: docker
     plan: free
-    dockerfilePath: ""
     image: hasura/graphql-engine:v2.36.1
     envVars:
       - key: HASURA_GRAPHQL_DATABASE_URL
@@ -41,7 +40,6 @@ services:
     name: postgres
     env: docker
     plan: free
-    dockerfilePath: ""
     image: postgres:15
     envVars:
       - key: POSTGRES_USER
