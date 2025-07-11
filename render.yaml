@@ -1,0 +1,52 @@
+services:
+  - type: web
+    name: backend
+    env: docker
+    plan: free
+    dockerfilePath: backend/Dockerfile
+    buildCommand: ""
+    startCommand: ""
+    envVars:
+      - key: DATABASE_URL
+        value: postgres://fleetadmin:fleetpass@postgres:5432/fleetdb
+      - key: HASURA_GRAPHQL_ENDPOINT
+        value: http://hasura:8080/v1/graphql
+
+  - type: web
+    name: frontend
+    env: docker
+    plan: free
+    dockerfilePath: frontend/Dockerfile
+    buildCommand: ""
+    startCommand: ""
+    envVars:
+      - key: VITE_GRAPHQL_ENDPOINT
+        value: http://hasura:8080/v1/graphql
+
+  - type: web
+    name: hasura
+    env: docker
+    plan: free
+    dockerfilePath: ""
+    image: hasura/graphql-engine:v2.36.1
+    envVars:
+      - key: HASURA_GRAPHQL_DATABASE_URL
+        value: postgres://fleetadmin:fleetpass@postgres:5432/fleetdb
+      - key: HASURA_GRAPHQL_ENABLE_CONSOLE
+        value: "true"
+      - key: HASURA_GRAPHQL_ADMIN_SECRET
+        value: myhasurasecret
+
+  - type: pserv
+    name: postgres
+    env: docker
+    plan: free
+    dockerfilePath: ""
+    image: postgres:15
+    envVars:
+      - key: POSTGRES_USER
+        value: fleetadmin
+      - key: POSTGRES_PASSWORD
+        value: fleetpass
+      - key: POSTGRES_DB
+        value: fleetdb 
