@@ -3,7 +3,7 @@ services:
     name: backend
     env: docker
     plan: free
-    dockerfilePath: Dockerfile.backend
+    dockerfilePath: ./Dockerfile.backend
     envVars:
       - key: DATABASE_URL
         value: postgres://fleetadmin:fleetpass@postgres:5432/fleetdb
@@ -14,11 +14,10 @@ services:
     name: frontend
     env: docker
     plan: free
-    dockerfilePath: Dockerfile.frontend
+    dockerfilePath: ./Dockerfile.frontend
     envVars:
       - key: VITE_GRAPHQL_ENDPOINT
         value: http://hasura:8080/v1/graphql
-    # Render will use port 80 by default for web services
 
   - type: web
     name: hasura
